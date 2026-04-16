@@ -24,4 +24,4 @@ Never put business logic in routes or controllers directly.
 - Kotlin idiomatic style: null safety, scope functions, extension functions where appropriate
 
 ## Current Phase
-Phase 1 — Backend scaffold
+Phase 4 — React frontend
