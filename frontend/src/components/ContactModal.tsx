@@ -37,6 +37,12 @@ function validate(f: FormState): FormErrors {
   return e
 }
 
+const IconClose = () => (
+  <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+    <path d="M1 1l10 10M11 1 1 11"/>
+  </svg>
+)
+
 export default function ContactModal({ contact, onSave, onClose }: Props) {
   const isEdit = Boolean(contact)
 
@@ -90,8 +96,8 @@ export default function ContactModal({ contact, onSave, onClose }: Props) {
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal" onClick={e => e.stopPropagation()}>
         <div className="modal__header">
-          <h2 className="modal__title">{isEdit ? 'Edit Contact' : 'Add Contact'}</h2>
-          <button className="modal__close" onClick={onClose}>×</button>
+          <h2 className="modal__title">{isEdit ? 'Edit Contact' : 'New Contact'}</h2>
+          <button className="modal__close" onClick={onClose} aria-label="Close"><IconClose /></button>
         </div>
 
         <form className="modal__form" onSubmit={handleSubmit} noValidate>
@@ -101,7 +107,7 @@ export default function ContactModal({ contact, onSave, onClose }: Props) {
             <div className="field">
               <label className="field__label">First Name <span className="field__required">*</span></label>
               <input className={`field__input ${errors.firstName ? 'field__input--error' : ''}`}
-                value={form.firstName} onChange={set('firstName')} placeholder="John" />
+                value={form.firstName} onChange={set('firstName')} placeholder="Jane" />
               {errors.firstName && <span className="field__error">{errors.firstName}</span>}
             </div>
             <div className="field">
@@ -116,7 +122,7 @@ export default function ContactModal({ contact, onSave, onClose }: Props) {
             <label className="field__label">Email <span className="field__required">*</span></label>
             <input type="email"
               className={`field__input ${errors.email ? 'field__input--error' : ''}`}
-              value={form.email} onChange={set('email')} placeholder="john@example.com" />
+              value={form.email} onChange={set('email')} placeholder="jane@example.com" />
             {errors.email && <span className="field__error">{errors.email}</span>}
           </div>
 
@@ -137,7 +143,7 @@ export default function ContactModal({ contact, onSave, onClose }: Props) {
           <div className="modal__footer">
             <button type="button" className="btn btn--ghost" onClick={onClose} disabled={saving}>Cancel</button>
             <button type="submit" className="btn btn--primary" disabled={saving}>
-              {saving ? 'Saving…' : isEdit ? 'Save Changes' : 'Add Contact'}
+              {saving ? 'Saving…' : isEdit ? 'Save Changes' : 'Create Contact'}
             </button>
           </div>
         </form>
