@@ -31,7 +31,18 @@ private fun Route.contactRoutes(controller: ContactController) {
     }
 
     get("/contacts") {
-        runCatching { controller.getAllContacts() }
+        val name = call.request.queryParameters["name"]?.takeIf { it.isNotBlank() }
+        val email = call.request.queryParameters["email"]?.takeIf { it.isNotBlank() }
+
+        val page = call.request.queryParameters["page"]?.toIntOrNull() ?: 1
+        val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 10
+
+        if (page < 1)
+            return@get call.respondError(HttpStatusCode.BadRequest, "page must be >= 1")
+        if (limit < 1 || limit > 50)
+            return@get call.respondError(HttpStatusCode.BadRequest, "limit must be between 1 and 50")
+
+        runCatching { controller.getAllContacts(name, email, page, limit) }
             .onSuccess { call.respond(HttpStatusCode.OK, it) }
             .onFailure { e -> call.respondException(e) }
     }

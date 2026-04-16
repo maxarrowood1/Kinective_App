@@ -3,6 +3,7 @@ package com.addressbook.repositories
 import com.addressbook.models.ContactResponse
 import com.addressbook.models.Contacts
 import com.addressbook.models.CreateContactRequest
+import com.addressbook.models.PaginatedContactResponse
 import com.addressbook.models.UpdateContactRequest
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -28,8 +29,42 @@ class ContactRepository {
         Contacts.select { Contacts.id eq id }.singleOrNull()?.toContactResponse()
     }
 
-    fun getAllContacts(): List<ContactResponse> = transaction {
-        Contacts.selectAll().map { it.toContactResponse() }
+    fun getAllContacts(
+        name: String?,
+        email: String?,
+        page: Int,
+        limit: Int
+    ): PaginatedContactResponse = transaction {
+        // Build filters as a local function so each query gets its own fresh instance
+        fun Query.applyFilters(): Query = apply {
+            name?.lowercase()?.let { n ->
+                andWhere {
+                    (Contacts.firstName.lowerCase() like "%$n%") or
+                    (Contacts.lastName.lowerCase() like "%$n%")
+                }
+            }
+            email?.lowercase()?.let { e ->
+                andWhere { Contacts.email.lowerCase() like "%$e%" }
+            }
+        }
+
+        // Separate query for count — avoids mutating the fetch query
+        val totalCount = Contacts.selectAll().applyFilters().count().toInt()
+        val totalPages = Math.ceil(totalCount.toDouble() / limit).toInt().coerceAtLeast(1)
+        val offset = ((page - 1) * limit).toLong()
+
+        val data = Contacts.selectAll()
+            .applyFilters()
+            .limit(limit, offset)
+            .map { it.toContactResponse() }
+
+        PaginatedContactResponse(
+            data = data,
+            page = page,
+            limit = limit,
+            totalCount = totalCount,
+            totalPages = totalPages
+        )
     }
 
     fun updateContact(id: Int, request: UpdateContactRequest): ContactResponse? = transaction {

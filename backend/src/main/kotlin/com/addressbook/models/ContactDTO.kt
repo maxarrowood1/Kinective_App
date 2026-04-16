@@ -30,3 +30,12 @@ data class ContactResponse(
     val address: String?,
     val createdAt: String
 )
+
+@Serializable
+data class PaginatedContactResponse(
+    val data: List<ContactResponse>,
+    val page: Int,
+    val limit: Int,
+    val totalCount: Int,
+    val totalPages: Int
+)

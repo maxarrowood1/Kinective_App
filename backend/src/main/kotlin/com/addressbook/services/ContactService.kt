@@ -2,6 +2,7 @@ package com.addressbook.services
 
 import com.addressbook.models.ContactResponse
 import com.addressbook.models.CreateContactRequest
+import com.addressbook.models.PaginatedContactResponse
 import com.addressbook.models.UpdateContactRequest
 import com.addressbook.repositories.ContactRepository
 import com.addressbook.validation.ContactValidator
@@ -19,8 +20,12 @@ class ContactService(private val repository: ContactRepository) {
         repository.getContactById(id)
             ?: throw NotFoundException("Contact with id $id not found")
 
-    fun getAllContacts(): List<ContactResponse> =
-        repository.getAllContacts()
+    fun getAllContacts(
+        name: String?,
+        email: String?,
+        page: Int,
+        limit: Int
+    ): PaginatedContactResponse = repository.getAllContacts(name, email, page, limit)
 
     fun updateContact(id: Int, request: UpdateContactRequest): ContactResponse {
         ContactValidator.validate(request)

@@ -2,6 +2,7 @@ package com.addressbook.controllers
 
 import com.addressbook.models.ContactResponse
 import com.addressbook.models.CreateContactRequest
+import com.addressbook.models.PaginatedContactResponse
 import com.addressbook.models.UpdateContactRequest
 import com.addressbook.services.ContactService
 
@@ -13,8 +14,12 @@ class ContactController(private val service: ContactService) {
     fun getContactById(id: Int): ContactResponse =
         service.getContactById(id)
 
-    fun getAllContacts(): List<ContactResponse> =
-        service.getAllContacts()
+    fun getAllContacts(
+        name: String?,
+        email: String?,
+        page: Int,
+        limit: Int
+    ): PaginatedContactResponse = service.getAllContacts(name, email, page, limit)
 
     fun updateContact(id: Int, request: UpdateContactRequest): ContactResponse =
         service.updateContact(id, request)
