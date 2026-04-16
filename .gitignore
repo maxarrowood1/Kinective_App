@@ -1,0 +1,19 @@
+# Backend
+.gradle/
+backend/.gradle/
+backend/build/
+backend/addressbook.db
+*.db
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# OS
+.DS_Store

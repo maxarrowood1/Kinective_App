@@ -12,6 +12,9 @@ import java.time.LocalDateTime
 
 class ContactRepository {
 
+    /**
+     * Inserts a new contact row and returns the fully-populated [ContactResponse].
+     */
     fun createContact(request: CreateContactRequest): ContactResponse = transaction {
         val id = Contacts.insert {
             it[firstName] = request.firstName
@@ -22,20 +25,32 @@ class ContactRepository {
             it[createdAt] = LocalDateTime.now().toString()
         } get Contacts.id
 
-        Contacts.select { Contacts.id eq id }.single().toContactResponse()
+        Contacts.selectAll().where { Contacts.id eq id }.single().toContactResponse()
     }
 
+    /**
+     * Returns the contact with the given [id], or null if no such row exists.
+     */
     fun getContactById(id: Int): ContactResponse? = transaction {
-        Contacts.select { Contacts.id eq id }.singleOrNull()?.toContactResponse()
+        Contacts.selectAll().where { Contacts.id eq id }.singleOrNull()?.toContactResponse()
     }
 
+    /**
+     * Returns a paginated, optionally-filtered page of contacts.
+     *
+     * @param name  Case-insensitive partial match against firstName OR lastName.
+     * @param email Case-insensitive partial match against email.
+     * @param page  1-indexed page number.
+     * @param limit Maximum rows per page.
+     * @return [PaginatedContactResponse] with data, totals, and pagination metadata.
+     */
     fun getAllContacts(
         name: String?,
         email: String?,
         page: Int,
         limit: Int
     ): PaginatedContactResponse = transaction {
-        // Build filters as a local function so each query gets its own fresh instance
+        // Local extension so each query gets its own fresh instance — avoids count() mutating the fetch query.
         fun Query.applyFilters(): Query = apply {
             name?.lowercase()?.let { n ->
                 andWhere {
@@ -48,7 +63,6 @@ class ContactRepository {
             }
         }
 
-        // Separate query for count — avoids mutating the fetch query
         val totalCount = Contacts.selectAll().applyFilters().count().toInt()
         val totalPages = Math.ceil(totalCount.toDouble() / limit).toInt().coerceAtLeast(1)
         val offset = ((page - 1) * limit).toLong()
@@ -67,6 +81,10 @@ class ContactRepository {
         )
     }
 
+    /**
+     * Applies partial updates from [request] to the contact with the given [id].
+     * Returns the updated [ContactResponse], or null if the id does not exist.
+     */
     fun updateContact(id: Int, request: UpdateContactRequest): ContactResponse? = transaction {
         val updated = Contacts.update({ Contacts.id eq id }) {
             request.firstName?.let { v -> it[firstName] = v }
@@ -76,9 +94,13 @@ class ContactRepository {
             request.address?.let { v -> it[address] = v }
         }
         if (updated == 0) null
-        else Contacts.select { Contacts.id eq id }.single().toContactResponse()
+        else Contacts.selectAll().where { Contacts.id eq id }.single().toContactResponse()
     }
 
+    /**
+     * Deletes the contact with the given [id].
+     * @return true if a row was deleted, false if the id did not exist.
+     */
     fun deleteContact(id: Int): Boolean = transaction {
         Contacts.deleteWhere { Contacts.id eq id } > 0
     }

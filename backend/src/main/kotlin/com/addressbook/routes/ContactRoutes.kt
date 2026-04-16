@@ -11,6 +11,9 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.Serializable
 
+/**
+ * Registers all contact routes under `/api/v1` and wires them to [controller].
+ */
 fun Application.configureRouting(controller: ContactController) {
     routing {
         route("/api/v1") {
@@ -20,6 +23,7 @@ fun Application.configureRouting(controller: ContactController) {
 }
 
 private fun Route.contactRoutes(controller: ContactController) {
+    /** POST /api/v1/contacts — create a contact, responds 201 with [ContactResponse]. */
     post("/contacts") {
         runCatching { call.receive<CreateContactRequest>() }
             .onFailure { return@post call.respondError(HttpStatusCode.BadRequest, "Invalid request body") }
@@ -30,6 +34,7 @@ private fun Route.contactRoutes(controller: ContactController) {
             }
     }
 
+    /** GET /api/v1/contacts — list contacts; supports ?name, ?email, ?page, ?limit. */
     get("/contacts") {
         val name = call.request.queryParameters["name"]?.takeIf { it.isNotBlank() }
         val email = call.request.queryParameters["email"]?.takeIf { it.isNotBlank() }
@@ -47,6 +52,7 @@ private fun Route.contactRoutes(controller: ContactController) {
             .onFailure { e -> call.respondException(e) }
     }
 
+    /** GET /api/v1/contacts/{id} — fetch a single contact by id. */
     get("/contacts/{id}") {
         val id = call.parseId() ?: return@get
         runCatching { controller.getContactById(id) }
@@ -54,6 +60,7 @@ private fun Route.contactRoutes(controller: ContactController) {
             .onFailure { e -> call.respondException(e) }
     }
 
+    /** PUT /api/v1/contacts/{id} — partially update a contact, responds 200 with updated [ContactResponse]. */
     put("/contacts/{id}") {
         val id = call.parseId() ?: return@put
         runCatching { call.receive<UpdateContactRequest>() }
@@ -65,6 +72,7 @@ private fun Route.contactRoutes(controller: ContactController) {
             }
     }
 
+    /** DELETE /api/v1/contacts/{id} — delete a contact, responds 204 No Content. */
     delete("/contacts/{id}") {
         val id = call.parseId() ?: return@delete
         runCatching { controller.deleteContact(id) }
@@ -73,12 +81,14 @@ private fun Route.contactRoutes(controller: ContactController) {
     }
 }
 
+/** Parses the `{id}` path parameter as an Int, responding 400 and returning null on failure. */
 private suspend fun ApplicationCall.parseId(): Int? {
     val id = parameters["id"]?.toIntOrNull()
     if (id == null) respondError(HttpStatusCode.BadRequest, "id must be a valid integer")
     return id
 }
 
+/** Maps domain exceptions to appropriate HTTP status codes and responds with a JSON error body. */
 private suspend fun ApplicationCall.respondException(e: Throwable) = when (e) {
     is NotFoundException -> respondError(HttpStatusCode.NotFound, e.message ?: "Not found")
     is IllegalArgumentException -> respondError(HttpStatusCode.BadRequest, e.message ?: "Invalid input")
