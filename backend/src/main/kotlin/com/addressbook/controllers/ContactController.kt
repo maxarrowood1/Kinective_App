@@ -1,9 +1,24 @@
 package com.addressbook.controllers
 
-class ContactController {
-    // TODO: getAllContacts()   — delegate to ContactService.getAllContacts()
-    // TODO: getContactById()  — delegate to ContactService.getContactById()
-    // TODO: createContact()   — validate request, delegate to ContactService.createContact()
-    // TODO: updateContact()   — delegate to ContactService.updateContact()
-    // TODO: deleteContact()   — delegate to ContactService.deleteContact()
+import com.addressbook.models.ContactResponse
+import com.addressbook.models.CreateContactRequest
+import com.addressbook.models.UpdateContactRequest
+import com.addressbook.services.ContactService
+
+class ContactController(private val service: ContactService) {
+
+    fun createContact(request: CreateContactRequest): ContactResponse =
+        service.createContact(request)
+
+    fun getContactById(id: Int): ContactResponse =
+        service.getContactById(id)
+
+    fun getAllContacts(): List<ContactResponse> =
+        service.getAllContacts()
+
+    fun updateContact(id: Int, request: UpdateContactRequest): ContactResponse =
+        service.updateContact(id, request)
+
+    fun deleteContact(id: Int) =
+        service.deleteContact(id)
 }
