@@ -1,136 +1,193 @@
-# Kinective
-# Back-End Developer Skills Assessment
+# Kinective Address Book
 
-## Introduction
-
-We're excited that you want to be a part of Kinective. We want to ensure that we're hiring only the brightest and best talent in the market and ensure that we're a good fit for each other when it comes to the employment relationship. This skills assessment is used as an additional tool to evaluate your current skill set and to identify potential areas where we can harness and increase those skills.
-
-We look forward to reviewing your results and helping you achieve an amazing future with Kinective.
+A full-stack address book application built for the Kinective Back-End Developer Skills Assessment. Features a Kotlin/KTOR REST API with SQLite, a React + TypeScript frontend, full CRUD, search/filter, and pagination.
 
 ---
 
-## Requirements
+## Tech Stack
 
-This project requires you to create & design a simple address book application. Meet the following requirements:
-
-- **GUI creation is preferred (but optional)** - Consider using modern frontend frameworks like Vue, React, or Angular that can consume your API
-- **Use a database of your choice** (PostgreSQL, MySQL, MongoDB, Redis, H2, or any database you're comfortable with)
-- **Clearly show the Model-View-Controller (MVC) or similar architectural pattern** in your code
-- **Be able to demonstrate your Address Book Application supports C.R.U.D.** to our Kinective team
-  - Create a new contact in the database
-  - Read the contact
-  - Update the contact
-  - Delete the contact
-- **Add two additional functionalities on top of C.R.U.D.** These could range from:
-  - Search/filtering contacts
-  - Pagination
-  - User authentication/authorization
-  - Contact groups/categories
-  - Import/export functionality
-  - Contact validation
-  - Logging and audit trails
-- **Use proper data validation**
-- **Any coding language/framework can be used for the frontend** (if implementing a GUI)
+| Layer | Technology |
+|---|---|
+| Backend | Kotlin, KTOR (Netty), Gradle |
+| ORM | JetBrains Exposed (DSL) |
+| Database | SQLite (via `sqlite-jdbc`) |
+| Serialization | `kotlinx.serialization` |
+| Frontend | React 18, TypeScript, Vite |
+| HTTP Client | Axios |
 
 ---
 
-## Skills Evaluated
+## Prerequisites
 
-### Communication (2pts)
-We strongly believe communication is one of the cornerstones of success! We will evaluate you on your ability to communicate your:
-- Database structure and design decisions
-- API architecture and endpoint design
-- Ability to handle any questions related to your code
-- Code documentation and README clarity
+| Tool | Minimum Version |
+|---|---|
+| JDK | 17 |
+| Node.js | 18 |
+| npm | 9 |
 
-If you need any further clarification on our expectations, directions, vocabulary, or resources you could refer to, please let us know.
-
-### Design (2pts)
-We will evaluate your:
-- API design skills and RESTful principles
-- Code architecture and design patterns
-- Database schema design
-- If implementing a GUI: UI/UX design skills and ability to adapt to the latest trends in web applications
-- Give us a peek of your personality and design style!
-
-### Organization (2pts)
-Working in a team means your code is viewed by many people. That is why we need:
-- Code to be as comfortable to read as possible
-- Files organized exactly where they need to be
-- Proper coding conventions and idiomatic usage for your chosen language/framework
-- Clear project structure following industry best practices
-- Meaningful naming conventions
-
-### Requirements (9pts)
-We will evaluate if the app meets the requirements mentioned above using C.R.U.D.:
-- **Create** a new contact in the database (2pts)
-- **Read** the contact (2pts)
-- **Update** the contact (2pts)
-- **Delete** the contact (2pts)
-- **Proper data input validation** (1pt)
-
-Show us you know your C.R.U.D. and demonstrate proper error handling and API responses.
-
-### Optional Challenge - Design Document & Activity Flow Diagram (5pts)
-Create documentation that includes:
-- Activity/Flow diagram showing current design
-- Future enhancements that would be needed to make the application design fool-proof
-- API documentation (consider using OpenAPI/Swagger)
-- Architecture diagram showing how components interact
-
-We will evaluate:
-- Approach to design
-- Future readiness and scalability considerations
-- Edge case handling
-- How this design and data flow has been transferred to the code
+> The Gradle wrapper (`./gradlew`) is included — no separate Gradle installation is needed.
 
 ---
 
-## Technical Recommendations
+## Setup & Run
 
-**Note:** While any programming language and framework can be used for this assessment, we strongly prefer **Kotlin with the KTOR framework**. The recommendations below focus on Kotlin/KTOR, but feel free to use equivalent patterns and best practices in your chosen technology stack.
+### 1. Clone the repository
+```bash
+git clone <repository-url>
+cd Kinective_App
+```
 
-### If Using Kotlin & KTOR (Preferred):
-- Utilize KTOR's routing DSL for clean API endpoint definition
-- Implement proper content negotiation (JSON serialization with kotlinx.serialization, jackson, or equivalent)
-- Use KTOR's features/plugins for authentication, CORS, status pages, etc.
-- Consider using Exposed or other Kotlin-friendly ORM for database operations
-- Use coroutines and suspend functions appropriately
-- Leverage Kotlin's null safety features
-- Use data classes for models
-- Utilize Kotlin's extension functions where appropriate
-- Implement proper scope functions (let, apply, run, etc.)
+### 2. Start the backend
+```bash
+cd backend
+./gradlew run
+```
 
-### General Best Practices (All Technologies):
-- Follow RESTful principles for API design
-- Use appropriate HTTP methods (GET, POST, PUT/PATCH, DELETE)
-- Return proper HTTP status codes
-- Implement consistent error responses
-- Consider API versioning
-- Write clean, readable, and well-organized code
-- Use proper separation of concerns and architectural patterns
-- Implement comprehensive error handling and validation
+The server starts on **http://localhost:8080**. On first run, `addressbook.db` is created automatically in the `backend/` directory.
 
----
+### 3. Start the frontend (new terminal)
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-## Submission Guidelines
-
-Please provide:
-1. **Source code** - Hosted on GitHub, GitLab, or similar platform
-2. **README.md** - Including:
-   - Setup instructions
-   - How to run the application
-   - API documentation or link to Postman collection
-   - Any environment variables or configuration needed
-   - Technology stack and dependencies used
-3. **Database schema** or migration scripts
-4. **(Optional)** Demo video or deployed application URL
-5. **(Optional)** Design documents and diagrams
+The UI is available at **http://localhost:5173**. Vite proxies all `/api` requests to `localhost:8080`, so no CORS configuration is needed during development.
 
 ---
 
-## Evaluation Timeline
+## Project Structure
 
-We expect this assessment to take approximately **4-8 hours** to complete. Please submit your completed project within **7 days** of receiving this assessment.
+```
+Kinective_App/
+├── backend/                        # KTOR application
+│   ├── build.gradle.kts
+│   └── src/main/kotlin/com/addressbook/
+│       ├── Application.kt          # Server entry point, plugins
+│       ├── DatabaseFactory.kt      # SQLite init, schema creation
+│       ├── models/                 # Exposed table objects + DTOs
+│       ├── routes/                 # HTTP routing (ContactRoutes.kt)
+│       ├── controllers/            # Thin delegates to service
+│       ├── services/               # Business logic + domain exceptions
+│       ├── repositories/           # Exposed DSL database access
+│       └── validation/             # ContactValidator (create + update)
+├── frontend/                       # React + TypeScript (Vite)
+│   ├── vite.config.ts              # /api proxy to :8080
+│   └── src/
+│       ├── api/contacts.ts         # All axios API calls
+│       ├── types/contact.ts        # TypeScript interfaces
+│       ├── components/             # Toast, ContactModal, ConfirmDialog
+│       └── pages/ContactsPage.tsx  # Main contacts UI
+└── docs/
+    ├── DESIGN.md                   # Architecture, schema, API reference
+    ├── FLOW.md                     # Mermaid sequence diagrams per operation
+    └── FUTURE_ENHANCEMENTS.md      # Production readiness roadmap
+```
 
 ---
+
+## API Reference
+
+Base URL: `http://localhost:8080/api/v1`
+
+| Method | Path | Status | Description |
+|---|---|---|---|
+| `GET` | `/contacts` | 200 | List contacts (paginated, filterable) |
+| `POST` | `/contacts` | 201 | Create a new contact |
+| `GET` | `/contacts/{id}` | 200 | Get contact by ID |
+| `PUT` | `/contacts/{id}` | 200 | Update contact by ID |
+| `DELETE` | `/contacts/{id}` | 204 | Delete contact by ID |
+
+### GET /contacts — Query Parameters
+
+| Param | Default | Description |
+|---|---|---|
+| `name` | — | Case-insensitive partial match on first or last name |
+| `email` | — | Case-insensitive partial match on email |
+| `page` | `1` | Page number (1-indexed) |
+| `limit` | `10` | Results per page (max 50) |
+
+### Example Requests
+
+```bash
+# List all contacts
+curl http://localhost:8080/api/v1/contacts
+
+# Search by name, paginated
+curl "http://localhost:8080/api/v1/contacts?name=john&page=1&limit=5"
+
+# Create a contact
+curl -X POST http://localhost:8080/api/v1/contacts \
+  -H "Content-Type: application/json" \
+  -d '{"firstName":"Jane","lastName":"Doe","email":"jane@example.com","phone":"+1 555 0100"}'
+
+# Update a contact
+curl -X PUT http://localhost:8080/api/v1/contacts/1 \
+  -H "Content-Type: application/json" \
+  -d '{"email":"jane.doe@example.com"}'
+
+# Delete a contact
+curl -X DELETE http://localhost:8080/api/v1/contacts/1
+```
+
+### Error Response Shape
+
+All errors return JSON:
+```json
+{
+  "error": "Not Found",
+  "message": "Contact with id 42 not found"
+}
+```
+
+| Scenario | Status |
+|---|---|
+| Validation failure | 400 |
+| Invalid / missing ID | 400 |
+| Contact not found | 404 |
+| Server error | 500 |
+
+---
+
+## Configuration
+
+### Backend (`backend/src/main/resources/application.conf`)
+
+| Setting | Default | Description |
+|---|---|---|
+| `ktor.deployment.port` | `8080` | HTTP port |
+
+### Database
+
+The SQLite database file is created at `backend/addressbook.db` on first run. No credentials or additional setup required.
+
+To migrate to PostgreSQL for production, see [docs/DESIGN.md — Database Choice & Migration Path](docs/DESIGN.md#database-choice--migration-path).
+
+---
+
+## Documentation
+
+| Document | Description |
+|---|---|
+| [docs/DESIGN.md](docs/DESIGN.md) | Architecture overview, MVC breakdown, database schema, full API reference, validation rules |
+| [docs/FLOW.md](docs/FLOW.md) | Mermaid sequence diagrams for Create, Read, Update, Delete — including failure paths |
+| [docs/FUTURE_ENHANCEMENTS.md](docs/FUTURE_ENHANCEMENTS.md) | Production readiness roadmap: auth, rate limiting, PostgreSQL, Docker, audit logs, and more |
+
+---
+
+## Architecture Overview
+
+```
+Browser (React + Vite :5173)
+        │  axios  /api/v1/*
+        ▼  (Vite proxy)
+KTOR Backend (:8080)
+  Routes → Controller → Service → Repository
+                              │
+                         Exposed DSL
+                              │
+                           SQLite
+                       (addressbook.db)
+```
+
+The MVC chain enforces strict separation: Routes handle HTTP concerns, Controllers are thin delegates, Services own all business logic, Repositories own all database I/O.
