@@ -10,6 +10,10 @@ interface Props {
   onAccent: (name: string) => void
   onFontSize: (s: FontSize) => void
   onClose: () => void
+  onSnowstorm: () => void
+  snowing: boolean
+  onDisco: () => void
+  discoing: boolean
 }
 
 const IconX = () => (
@@ -25,7 +29,7 @@ const FONT_SIZES: { key: FontSize; label: string }[] = [
   { key: 'large',  label: 'A' },
 ]
 
-export default function SettingsModal({ theme, accent, fontSize, onTheme, onAccent, onFontSize, onClose }: Props) {
+export default function SettingsModal({ theme, accent, fontSize, onTheme, onAccent, onFontSize, onClose, onSnowstorm, snowing, onDisco, discoing }: Props) {
   const handleBackdrop = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) onClose()
   }
@@ -105,6 +109,28 @@ export default function SettingsModal({ theme, accent, fontSize, onTheme, onAcce
                   </button>
                 ))}
               </div>
+            </div>
+          </section>
+
+          <div className="settings-divider" />
+
+          <section className="settings-section">
+            <div className="settings-section__label">Easter Egg</div>
+            <div className="easter-egg-btns">
+              <button
+                className="snowstorm-btn"
+                onClick={onSnowstorm}
+                disabled={snowing || discoing}
+              >
+                {snowing ? '❄ Snowing...' : '❄ Snowstorm'}
+              </button>
+              <button
+                className="disco-btn"
+                onClick={onDisco}
+                disabled={discoing || snowing}
+              >
+                {discoing ? '🪩 Grooving...' : '🪩 Disco'}
+              </button>
             </div>
           </section>
         </div>

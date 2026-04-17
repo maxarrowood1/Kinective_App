@@ -128,3 +128,45 @@
   background: rgba(var(--accent-rgb), 0.1);
   color: var(--accent);
 }
+
+/* ── Snowstorm easter egg ──────────────────────────────────── */
+.easter-egg-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.snowstorm-btn,
+.disco-btn {
+  flex: 1;
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  font-family: inherit;
+  letter-spacing: 0.01em;
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+.snowstorm-btn {
+  background: linear-gradient(135deg, #58a6ff, #a5d8ff);
+  color: #0d1117;
+}
+
+.disco-btn {
+  background: linear-gradient(135deg, #f72585, #7209b7, #4cc9f0);
+  color: #ffffff;
+}
+
+.snowstorm-btn:hover:not(:disabled),
+.disco-btn:hover:not(:disabled) {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.snowstorm-btn:disabled,
+.disco-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

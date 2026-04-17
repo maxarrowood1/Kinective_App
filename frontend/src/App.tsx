@@ -2,6 +2,8 @@ import { useState, useCallback } from 'react'
 import ContactsPage from './pages/ContactsPage'
 import Toast, { type ToastType } from './components/Toast'
 import SettingsModal from './components/SettingsModal'
+import Snowstorm from './components/Snowstorm'
+import Disco from './components/Disco'
 import { useSettings } from './hooks/useSettings'
 import './App.css'
 
@@ -42,6 +44,8 @@ const IconGear = () => (
 export default function App() {
   const [toast, setToast] = useState<ToastState | null>(null)
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [showSnowstorm, setShowSnowstorm] = useState(false)
+  const [showDisco, setShowDisco] = useState(false)
   const { theme, accent, fontSize, setTheme, setAccent, setFontSize } = useSettings()
 
   const showToast = useCallback((message: string, type: ToastType) => {
@@ -101,7 +105,19 @@ export default function App() {
           onAccent={setAccent}
           onFontSize={setFontSize}
           onClose={() => setSettingsOpen(false)}
+          onSnowstorm={() => { setSettingsOpen(false); setShowSnowstorm(true) }}
+          snowing={showSnowstorm}
+          onDisco={() => { setSettingsOpen(false); setShowDisco(true) }}
+          discoing={showDisco}
         />
+      )}
+
+      {showSnowstorm && (
+        <Snowstorm onComplete={() => setShowSnowstorm(false)} />
+      )}
+
+      {showDisco && (
+        <Disco onComplete={() => setShowDisco(false)} />
       )}
     </div>
   )
