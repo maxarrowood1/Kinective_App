@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import type { ContactResponse, CreateContactRequest, UpdateContactRequest } from '../types/contact'
 import { getContacts, createContact, updateContact, deleteContact } from '../api/contacts'
 import ContactModal from '../components/ContactModal'
+import ContactDetailModal from '../components/ContactDetailModal'
 import ConfirmDialog from '../components/ConfirmDialog'
 import type { ToastType } from '../components/Toast'
 import './ContactsPage.css'
@@ -48,6 +49,7 @@ export default function ContactsPage({ showToast }: Props) {
   const [modalOpen, setModalOpen] = useState(false)
   const [editTarget, setEditTarget] = useState<ContactResponse | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<ContactResponse | null>(null)
+  const [selectedContact, setSelectedContact] = useState<ContactResponse | null>(null)
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -115,6 +117,7 @@ export default function ContactsPage({ showToast }: Props) {
   const openEdit = (c: ContactResponse) => { setEditTarget(c); setModalOpen(true) }
   const openAdd = () => { setEditTarget(null); setModalOpen(true) }
   const closeModal = () => { setModalOpen(false); setEditTarget(null) }
+  const openEditFromDetail = (c: ContactResponse) => { setSelectedContact(null); openEdit(c) }
 
   return (
     <div className="contacts-page">
@@ -169,13 +172,13 @@ export default function ContactsPage({ showToast }: Props) {
                   <th>Name</th>
                   <th>Email</th>
                   <th>Phone</th>
-                  <th>Added</th>
+                  <th>Address</th>
                   <th className="contacts-table__actions-col" />
                 </tr>
               </thead>
               <tbody>
                 {contacts.map(c => (
-                  <tr key={c.id} className="contacts-table__row">
+                  <tr key={c.id} className="contacts-table__row" style={{ cursor: 'pointer' }} onClick={() => setSelectedContact(c)}>
                     <td>
                       <div className="contact-name">
                         <div className="contact-name__avatar">
@@ -187,20 +190,20 @@ export default function ContactsPage({ showToast }: Props) {
                     <td className="contacts-table__muted">{c.email}</td>
                     <td className="contacts-table__muted">{c.phone ?? '—'}</td>
                     <td className="contacts-table__muted">
-                      {new Date(c.createdAt).toLocaleDateString()}
+                      {c.address || <span style={{ color: 'var(--text-muted)' }}>—</span>}
                     </td>
                     <td>
                       <div className="contact-actions">
                         <button
                           className="contact-actions__btn contact-actions__btn--edit"
-                          onClick={() => openEdit(c)}
+                          onClick={e => { e.stopPropagation(); openEdit(c) }}
                           title="Edit"
                         >
                           <IconEdit />
                         </button>
                         <button
                           className="contact-actions__btn contact-actions__btn--delete"
-                          onClick={() => setDeleteTarget(c)}
+                          onClick={e => { e.stopPropagation(); setDeleteTarget(c) }}
                           title="Delete"
                         >
                           <IconDelete />
@@ -227,6 +230,14 @@ export default function ContactsPage({ showToast }: Props) {
           </div>
         )}
       </div>
+
+      {selectedContact && !modalOpen && (
+        <ContactDetailModal
+          contact={selectedContact}
+          onEdit={openEditFromDetail}
+          onClose={() => setSelectedContact(null)}
+        />
+      )}
 
       {modalOpen && (
         <ContactModal
