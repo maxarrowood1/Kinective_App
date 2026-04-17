@@ -5,22 +5,30 @@
 }
 
 :root {
-  --bg-primary:     #0d1117;
-  --bg-secondary:   #161b22;
-  --bg-tertiary:    #21262d;
-  --bg-glass:       rgba(22, 27, 34, 0.85);
-  --border:         #30363d;
-  --border-bright:  #484f58;
-  --accent:         #58a6ff;
-  --accent-hover:   #79c0ff;
-  --accent-danger:  #f85149;
-  --accent-success: #3fb950;
-  --text-primary:   #e6edf3;
-  --text-secondary: #8b949e;
-  --text-muted:     #484f58;
+  --font-size-base: 15px;
+
+  /* Dark theme defaults (applied before JS hydrates) */
+  --bg-primary:        #0d1117;
+  --bg-secondary:      #161b22;
+  --bg-tertiary:       #21262d;
+  --bg-glass:          rgba(22, 27, 34, 0.85);
+  --border:            #30363d;
+  --border-bright:     #484f58;
+  --accent:            #58a6ff;
+  --accent-hover:      #79c0ff;
+  --accent-rgb:        88, 166, 255;
+  --accent-secondary:  #a78bfa;
+  --accent-danger:     #f85149;
+  --accent-danger-rgb: 248, 81, 73;
+  --accent-success:    #3fb950;
+  --text-primary:      #e6edf3;
+  --text-secondary:    #8b949e;
+  --text-muted:        #484f58;
+  --modal-backdrop:    rgba(0, 0, 0, 0.7);
+  --btn-primary-text:  #0d1117;
 
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-base);
   color: var(--text-primary);
   background: var(--bg-primary);
   -webkit-font-smoothing: antialiased;
@@ -28,8 +36,37 @@
   scroll-behavior: smooth;
 }
 
+[data-theme="dark"] {
+  --bg-primary:       #0d1117;
+  --bg-secondary:     #161b22;
+  --bg-tertiary:      #21262d;
+  --bg-glass:         rgba(22, 27, 34, 0.85);
+  --border:           #30363d;
+  --border-bright:    #484f58;
+  --text-primary:     #e6edf3;
+  --text-secondary:   #8b949e;
+  --text-muted:       #484f58;
+  --modal-backdrop:   rgba(0, 0, 0, 0.7);
+  --btn-primary-text: #0d1117;
+}
+
+[data-theme="light"] {
+  --bg-primary:       #f6f8fa;
+  --bg-secondary:     #ffffff;
+  --bg-tertiary:      #f0f2f5;
+  --bg-glass:         rgba(255, 255, 255, 0.8);
+  --border:           #d0d7de;
+  --border-bright:    #b0b7be;
+  --text-primary:     #1c2128;
+  --text-secondary:   #57606a;
+  --text-muted:       #8c959f;
+  --modal-backdrop:   rgba(0, 0, 0, 0.4);
+  --btn-primary-text: #ffffff;
+}
+
 body {
   background: var(--bg-primary);
+  font-size: var(--font-size-base);
 }
 
 #root {

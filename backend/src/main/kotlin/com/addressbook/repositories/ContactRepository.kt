@@ -90,8 +90,8 @@ class ContactRepository {
             request.firstName?.let { v -> it[firstName] = v }
             request.lastName?.let { v -> it[lastName] = v }
             request.email?.let { v -> it[email] = v }
-            request.phone?.let { v -> it[phone] = v }
-            request.address?.let { v -> it[address] = v }
+            request.phone.let { v -> it[phone] = v }
+            request.address.let { v -> it[address] = v }
         }
         if (updated == 0) null
         else Contacts.selectAll().where { Contacts.id eq id }.single().toContactResponse()

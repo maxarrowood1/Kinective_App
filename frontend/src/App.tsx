@@ -1,6 +1,8 @@
 import { useState, useCallback } from 'react'
 import ContactsPage from './pages/ContactsPage'
 import Toast, { type ToastType } from './components/Toast'
+import SettingsModal from './components/SettingsModal'
+import { useSettings } from './hooks/useSettings'
 import './App.css'
 
 interface ToastState {
@@ -30,8 +32,17 @@ const IconContacts = () => (
   </svg>
 )
 
+const IconGear = () => (
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="8" cy="8" r="2.5"/>
+    <path d="M8 1.5V3M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1.1 1.1M11.5 11.5l1.1 1.1M12.6 3.4l-1.1 1.1M4.5 11.5l-1.1 1.1"/>
+  </svg>
+)
+
 export default function App() {
   const [toast, setToast] = useState<ToastState | null>(null)
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const { theme, accent, fontSize, setTheme, setAccent, setFontSize } = useSettings()
 
   const showToast = useCallback((message: string, type: ToastType) => {
     setToast({ message, type, id: Date.now() })
@@ -57,6 +68,14 @@ export default function App() {
 
         <div className="sidebar__footer">
           <div className="sidebar__footer-text">v1.0 · Kinective Assessment</div>
+          <button
+            className="sidebar__settings-btn"
+            onClick={() => setSettingsOpen(true)}
+            aria-label="Open settings"
+          >
+            <span className="sidebar__settings-icon"><IconGear /></span>
+            Settings
+          </button>
         </div>
       </aside>
 
@@ -70,6 +89,18 @@ export default function App() {
           message={toast.message}
           type={toast.type}
           onClose={() => setToast(null)}
+        />
+      )}
+
+      {settingsOpen && (
+        <SettingsModal
+          theme={theme}
+          accent={accent}
+          fontSize={fontSize}
+          onTheme={setTheme}
+          onAccent={setAccent}
+          onFontSize={setFontSize}
+          onClose={() => setSettingsOpen(false)}
         />
       )}
     </div>
