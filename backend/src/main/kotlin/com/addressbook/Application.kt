@@ -26,7 +26,7 @@ fun Application.module() {
     val controller = ContactController(ContactService(ContactRepository()))
 
     install(ContentNegotiation) {
-        json(Json { prettyPrint = true; isLenient = true })
+        json(Json { prettyPrint = true; isLenient = false })
     }
 
     install(CORS) {
@@ -45,8 +45,8 @@ fun Application.module() {
         status(HttpStatusCode.NotFound) { call, _ ->
             call.respond(HttpStatusCode.NotFound, ErrorResponse("Not Found", "The requested resource was not found"))
         }
-        exception<Throwable> { call, cause ->
-            call.respond(HttpStatusCode.InternalServerError, ErrorResponse("Internal Server Error", cause.message ?: "An unexpected error occurred"))
+        exception<Throwable> { call, _ ->
+            call.respond(HttpStatusCode.InternalServerError, ErrorResponse("Internal Server Error", "An unexpected error occurred"))
         }
     }
 

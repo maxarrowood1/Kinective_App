@@ -92,7 +92,7 @@ private suspend fun ApplicationCall.parseId(): Int? {
 private suspend fun ApplicationCall.respondException(e: Throwable) = when (e) {
     is NotFoundException -> respondError(HttpStatusCode.NotFound, e.message ?: "Not found")
     is IllegalArgumentException -> respondError(HttpStatusCode.BadRequest, e.message ?: "Invalid input")
-    else -> respondError(HttpStatusCode.InternalServerError, e.message ?: "An unexpected error occurred")
+    else -> respondError(HttpStatusCode.InternalServerError, "An unexpected error occurred")
 }
 
 @Serializable

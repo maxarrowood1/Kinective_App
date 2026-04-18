@@ -51,15 +51,19 @@ class ContactRepository {
         limit: Int
     ): PaginatedContactResponse = transaction {
         // Local extension so each query gets its own fresh instance — avoids count() mutating the fetch query.
+        fun String.escapeLike() = replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+
         fun Query.applyFilters(): Query = apply {
             name?.lowercase()?.let { n ->
+                val safe = n.escapeLike()
                 andWhere {
-                    (Contacts.firstName.lowerCase() like "%$n%") or
-                    (Contacts.lastName.lowerCase() like "%$n%")
+                    (Contacts.firstName.lowerCase() like "%$safe%") or
+                    (Contacts.lastName.lowerCase() like "%$safe%")
                 }
             }
             email?.lowercase()?.let { e ->
-                andWhere { Contacts.email.lowerCase() like "%$e%" }
+                val safe = e.escapeLike()
+                andWhere { Contacts.email.lowerCase() like "%$safe%" }
             }
         }
 

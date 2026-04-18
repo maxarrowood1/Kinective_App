@@ -71,7 +71,7 @@ export default function App() {
         </nav>
 
         <div className="sidebar__footer">
-          <div className="sidebar__footer-text">v1.0 · Kinective Assessment</div>
+          <div className="sidebar__footer-text">v1.0 · Arrowood</div>
           <button
             className="sidebar__settings-btn"
             onClick={() => setSettingsOpen(true)}
